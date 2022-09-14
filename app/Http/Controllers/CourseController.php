@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Course\DeleteRequest;
+use App\Http\Requests\Course\StoreRequest;
+use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
-use App\Http\Requests\StoreCourseRequest;
-use App\Http\Requests\UpdateCourseRequest;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -13,11 +14,15 @@ class CourseController extends Controller
      * Display a listing of the resource.
      *
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::query()->get();
+        $search = $request->get("q");
+        $courses = Course::query()->where("name","like",'%'.$search.'%')->paginate(2);
+        $courses->appends(['q' => $search]);
+
         return view("courses.index", [
             "courses" => $courses,
+            "search" => $search,
         ]);
     }
 
@@ -34,16 +39,15 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreCourseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         $course = new Course();
-        $course->fill($request->except("_token"));
+        $course->fill($request->validated());
         $course->save();
 
-        return redirect()->route("course.index");
+        return redirect()->route("courses.index");
     }
 
     /**
@@ -77,15 +81,12 @@ class CourseController extends Controller
      * @param  \App\Models\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Course $course)
+    public function update(UpdateRequest $request, Course $course)
     {
         Course::where("id",$course->id)->update(
-            $request->except([
-                "_token",
-                "_method",
-            ])
+            $request->validated()
             );
-        return redirect()->route("course.index");
+        return redirect()->route("courses.index");
 
     }
 
@@ -95,12 +96,12 @@ class CourseController extends Controller
      * @param  \App\Models\Course  $course
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Course $course)
+    public function destroy(DeleteRequest $request,$course)
     {
-        $course->delete();
+        Course::destroy($course);
         // nếu kh biến truyền vào không phải là 1 đối tượng thì ta dùng
         // Course::destroy();
         // Course::where("id",$course)->delete();
-        return redirect()->route("course.index");
+        return redirect()->route("courses.index");
     }
 }
