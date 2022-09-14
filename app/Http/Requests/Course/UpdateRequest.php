@@ -30,7 +30,7 @@ class UpdateRequest extends FormRequest
                 "bail",
                 "required",
                 "string",
-                Rule::unique(Course::class,"name")->ignore($this->course),
+                Rule::unique(Course::class,"name")->ignore($this->course->id),
             ],
         ];
     }
@@ -39,7 +39,6 @@ class UpdateRequest extends FormRequest
         return [
             "required" => ":attribute bắt buộc phải điền!",
             "unique" => ":attribute Đã trùng với tên khác trong db",
-
         ];
     }
     public function attributes()

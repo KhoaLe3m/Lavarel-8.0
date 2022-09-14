@@ -1,10 +1,9 @@
 <a href="{{ route("courses.create") }}">Thêm</a>
 <h1>Danh sách khóa học</h1>
-
 @if ($errors->any())
         <span>
             <ul>
-                @foreach ($errors->get("name") as $error)
+                @foreach ($errors->get("course") as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>

@@ -84,8 +84,10 @@ class CourseController extends Controller
     public function update(UpdateRequest $request, Course $course)
     {
         Course::where("id",$course->id)->update(
-            $request->validated()
-            );
+            $request->except([
+                "_token",
+                "_method",
+            ]));
         return redirect()->route("courses.index");
 
     }

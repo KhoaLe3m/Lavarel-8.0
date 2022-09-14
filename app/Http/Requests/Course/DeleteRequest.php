@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Course;
 
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
@@ -37,5 +36,11 @@ class DeleteRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge(["course" => $this->route("course")]);
+    }
+    public function messages()
+    {
+        return [
+            "required" => "bắt buộc phải nhập",
+        ];
     }
 }
